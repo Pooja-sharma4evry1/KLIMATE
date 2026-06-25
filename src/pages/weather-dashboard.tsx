@@ -76,6 +76,8 @@ export function WeatherDashboard() {
     );
   }
 
+  const locationName = locationQuery.data?.[0];
+
   if (weatherQuery.error || forecastQuery.error) {
     return (
       <Alert variant="destructive">
@@ -127,7 +129,10 @@ export function WeatherDashboard() {
 
       <div className="grid gap-6">
         <div className="flex flex-col gap-4 lg:flex-row">
-          <CurrentWeather data={weatherQuery.data} />
+          <CurrentWeather
+            data={weatherQuery.data}
+            locationName={locationName}
+          />
           <HourlyTemperature data={forecastQuery.data} />
         </div>
 

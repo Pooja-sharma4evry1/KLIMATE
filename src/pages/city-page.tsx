@@ -14,6 +14,7 @@ import WeatherSkeleton from "../components/loading-skeleton";
 import { FavoriteButton } from "@/components/favorite-button";
 import { WeatherAlerts } from "@/components/weather-alerts";
 import { AirQuality } from "@/components/air-quality";
+import type { GeocodingResponse } from "@/api/types";
 
 export function CityPage() {
   const [searchParams] = useSearchParams();
@@ -21,6 +22,8 @@ export function CityPage() {
 
   const lat = parseFloat(searchParams.get("lat") || "0");
   const lon = parseFloat(searchParams.get("lon") || "0");
+  const state = searchParams.get("state") || undefined;
+  const country = searchParams.get("country") || undefined;
 
   const coordinates = { lat, lon };
 
@@ -43,11 +46,19 @@ export function CityPage() {
     return <WeatherSkeleton />;
   }
 
+  const locationName: GeocodingResponse = {
+    name: params.cityName,
+    lat,
+    lon,
+    country: country || weatherQuery.data.sys.country,
+    state,
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">
-          {params.cityName}, {weatherQuery.data.sys.country}
+          {params.cityName}, {locationName.country}
         </h1>
 
         <FavoriteButton data={{ ...weatherQuery.data, name: params.cityName }} />
@@ -55,7 +66,7 @@ export function CityPage() {
 
       <div className="grid gap-6">
         <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-          <CurrentWeather data={weatherQuery.data} />
+          <CurrentWeather data={weatherQuery.data} locationName={locationName} />
           <HourlyTemperature data={forecastQuery.data} />
         </div>
 

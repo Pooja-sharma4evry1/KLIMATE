@@ -27,19 +27,30 @@ export function CitySearch() {
   const { history, clearHistory, addToHistory } = useSearchHistory();
 
   const handleSelect = (cityData: string) => {
-    const [lat, lon, name, country] = cityData.split("|");
+    const [lat, lon, name, country, state] = cityData.split("|");
 
-    // Add to search history
     addToHistory.mutate({
       query,
       name,
       lat: parseFloat(lat),
       lon: parseFloat(lon),
       country,
+      state,
     });
 
     setOpen(false);
-    navigate(`/city/${name}?lat=${lat}&lon=${lon}`);
+
+    const searchParams = new URLSearchParams({
+      lat,
+      lon,
+      country,
+    });
+
+    if (state) {
+      searchParams.set("state", state);
+    }
+
+    navigate(`/city/${name}?${searchParams.toString()}`);
   };
 
   return (
@@ -52,6 +63,7 @@ export function CitySearch() {
         <Search className="mr-2 h-4 w-4" />
         Search cities...
       </Button>
+
       <CommandDialog open={open} onOpenChange={setOpen}>
         <Command>
           <CommandInput
@@ -59,18 +71,18 @@ export function CitySearch() {
             value={query}
             onValueChange={setQuery}
           />
+
           <CommandList>
             {query.length > 2 && !isLoading && (
               <CommandEmpty>No cities found.</CommandEmpty>
             )}
 
-            {/* Favorites Section */}
             {favorites.length > 0 && (
               <CommandGroup heading="Favorites">
                 {favorites.map((city) => (
                   <CommandItem
                     key={city.id}
-                    value={`${city.lat}|${city.lon}|${city.name}|${city.country}`}
+                    value={`${city.lat}|${city.lon}|${city.name}|${city.country}|${city.state || ""}`}
                     onSelect={handleSelect}
                   >
                     <Star className="mr-2 h-4 w-4 text-yellow-500" />
@@ -88,7 +100,6 @@ export function CitySearch() {
               </CommandGroup>
             )}
 
-            {/* Search History Section */}
             {history.length > 0 && (
               <>
                 <CommandSeparator />
@@ -106,10 +117,11 @@ export function CitySearch() {
                       Clear History
                     </Button>
                   </div>
+
                   {history.map((item) => (
                     <CommandItem
                       key={item.id}
-                      value={`${item.lat}|${item.lon}|${item.name}|${item.country}`}
+                      value={`${item.lat}|${item.lon}|${item.name}|${item.country}|${item.state || ""}`}
                       onSelect={handleSelect}
                     >
                       <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -131,8 +143,8 @@ export function CitySearch() {
               </>
             )}
 
-            {/* Search Results */}
             <CommandSeparator />
+
             {locations && locations.length > 0 && (
               <CommandGroup heading="Suggestions">
                 {isLoading && (
@@ -140,10 +152,11 @@ export function CitySearch() {
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 )}
-                {locations?.map((location) => (
+
+                {locations.map((location) => (
                   <CommandItem
                     key={`${location.lat}-${location.lon}`}
-                    value={`${location.lat}|${location.lon}|${location.name}|${location.country}`}
+                    value={`${location.lat}|${location.lon}|${location.name}|${location.country}|${location.state || ""}`}
                     onSelect={handleSelect}
                   >
                     <Search className="mr-2 h-4 w-4" />

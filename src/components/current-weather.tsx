@@ -1,13 +1,14 @@
 import { Card, CardContent } from "./ui/card";
 import { ArrowDown, ArrowUp, Droplets, Wind } from "lucide-react";
-import type { WeatherData } from "@/api/types";
+import type { WeatherData, GeocodingResponse } from "@/api/types";
 import { useUnit } from "@/context/unit-provider";
 
 interface CurrentWeatherProps {
   data: WeatherData;
+  locationName?: GeocodingResponse;
 }
 
-export function CurrentWeather({ data }: CurrentWeatherProps) {
+export function CurrentWeather({ data, locationName }: CurrentWeatherProps) {
   const {
     weather: [currentWeather],
     main: { temp, feels_like, temp_min, temp_max, humidity },
@@ -21,11 +22,33 @@ export function CurrentWeather({ data }: CurrentWeatherProps) {
 
   const unitLabel = unit === "imperial" ? "°F" : "°C";
 
+  const locationTitle = locationName?.name || data.name;
+  const locationState = locationName?.state;
+  const locationCountry = locationName?.country || data.sys.country;
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
         <div className="grid min-h-[340px] gap-6 md:grid-cols-2">
           <div className="flex flex-col justify-center space-y-6">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-baseline gap-1">
+                <h2 className="text-2xl font-bold tracking-tight">
+                  {locationTitle}
+                </h2>
+
+                {locationState && (
+                  <span className="text-sm text-muted-foreground">
+                    , {locationState}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-sm text-muted-foreground">
+                {locationCountry}
+              </p>
+            </div>
+
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-start leading-none">
                 <span className="text-7xl font-bold tracking-tighter">
