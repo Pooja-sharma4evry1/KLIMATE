@@ -142,7 +142,34 @@ Users can:
 ---
 
 
+## 📸 Application Preview
 
+### 🌙 Dark Theme
 
+<p align="center">
+  <img src="./screenshots/dark-mode.png" alt="Dark Theme" width="80%">
+</p>
 
+---
 
+### ☀️ Light Theme
+
+<p align="center">
+  <img src="./screenshots/light-mode.png" alt="Light Theme" width="80%">
+</p>
+
+---
+
+### 🌤️ Weather Details
+
+<p align="center">
+  <img src="./screenshots/weather-details.png" alt="Weather Details" width="80%">
+</p>
+
+---
+
+### 🌫️ Air Quality
+
+<p align="center">
+  <img src="./screenshots/air-quality.png" alt="Air Quality" width="80%">
+</p>
